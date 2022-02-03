@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Main class for the Pizza Shop Calculator assignment.
+ * A calculator application to determine the price of a pizza.
  */
 public class PizzaShopCalculator extends JFrame {
 
@@ -71,7 +71,6 @@ public class PizzaShopCalculator extends JFrame {
         this.titlePanel = this.createTitlePanel();
         this.pizzaPanel = this.createPizzaPanel();
         this.priceBreakdownTable = this.createPriceBreakdown();
-        this.updatePriceBreakdown(0);
 
         // create main panel
         this.mainPanel = new JPanel();
@@ -85,6 +84,9 @@ public class PizzaShopCalculator extends JFrame {
         // create box layout for content pane and add panels
         final Container container = this.getContentPane();
         container.add(this.mainPanel);
+
+        // update price breakdown with no diameter
+        this.updatePriceBreakdown(0);
     }
 
     /**
