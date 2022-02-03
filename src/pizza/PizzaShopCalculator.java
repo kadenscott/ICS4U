@@ -68,14 +68,14 @@ public class PizzaShopCalculator extends JFrame {
         this.setSize(500, 500);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.mainPanel = new JPanel();
         this.titlePanel = this.createTitlePanel();
         this.pizzaPanel = this.createPizzaPanel();
         this.priceBreakdownTable = this.createPriceBreakdown();
         this.updatePriceBreakdown(0);
 
+        // create main panel
+        this.mainPanel = new JPanel();
         final BoxLayout layout = new BoxLayout(this.mainPanel, BoxLayout.PAGE_AXIS);
-
         this.mainPanel.setLayout(layout);
         this.mainPanel.add(this.titlePanel);
         this.mainPanel.add(this.pizzaPanel);
@@ -168,7 +168,6 @@ public class PizzaShopCalculator extends JFrame {
         layout.putConstraint(SpringLayout.NORTH, author, 3, SpringLayout.NORTH, panel);
         layout.putConstraint(SpringLayout.WEST, author, 10, SpringLayout.EAST, title);
 
-
         panel.setPreferredSize(new Dimension(Integer.MAX_VALUE, panelHeight));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panelHeight));
 
@@ -228,7 +227,6 @@ public class PizzaShopCalculator extends JFrame {
         diameterPanel.add(this.diameterField);
         diameterPanel.add(this.invalidLabel);
         diameterPanel.add(this.priceLabel);
-
 
         diameterPanel.setPreferredSize(dimension);
         diameterPanel.setMaximumSize(dimension);
