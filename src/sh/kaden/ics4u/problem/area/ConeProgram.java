@@ -1,4 +1,4 @@
-package sh.kaden.ics4u.simple.area;
+package sh.kaden.ics4u.problem.area;
 
 import java.util.Scanner;
 
