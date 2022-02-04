@@ -54,7 +54,7 @@ public final class ToppingPanel extends JPanel {
         this.buttonPanel.add(this.decrementButton);
         this.buttonPanel.setLayout(new GridLayout(0, 2));
 
-        // add button panels to this frame
+        // add button  & title panels to this frame
         this.add(this.titlePanel);
         this.add(this.buttonPanel);
 

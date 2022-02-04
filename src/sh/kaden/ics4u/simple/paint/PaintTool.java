@@ -1,5 +1,6 @@
-package sh.kaden.ics4u.simple;
+package sh.kaden.ics4u.simple.paint;
 
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 /**
@@ -9,6 +10,7 @@ public class PaintTool {
 
     private static final double PAINT_CAN_COST = 52.75; // dollars
     private static final double PAINT_CAN_AREA = 40; // meters squared
+    private static final DecimalFormat COST_FORMAT = new DecimalFormat("$##.00");
 
     /**
      * {@code PaintTool}'s entrypoint.
@@ -19,9 +21,9 @@ public class PaintTool {
         new PaintTool();
     }
 
-    private Cuboid room;
-    private Cuboid door;
-    private Cuboid[] windows;
+    private final Cuboid room;
+    private final Cuboid door;
+    private final Cuboid[] windows;
 
     /**
      * Constructs {@code PaintTool}.
@@ -36,6 +38,11 @@ public class PaintTool {
 
         final double roomArea = room.area();
         final double paintableArea = roomArea - door.area() - windows[0].area() - windows[1].area();
+        final double cans = Math.ceil(paintableArea / PAINT_CAN_AREA);
+
+        System.out.println("The paintable area of this room is "+paintableArea+" m^2");
+        System.out.println("That would be "+cans+" cans");
+        System.out.println("That would cost you "+COST_FORMAT.format(cans * PAINT_CAN_COST));
     }
 
     /**
@@ -105,8 +112,7 @@ public class PaintTool {
          * @return the TSA
          */
         public double area() {
-            final double a = 2 * (length * width + width * height + length * height);
-            return Math.pow(a, 2);
+            return 2 * (length * width + width * height + length * height);
         }
 
     }
