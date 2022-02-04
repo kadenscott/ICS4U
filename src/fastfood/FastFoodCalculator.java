@@ -122,6 +122,11 @@ public class FastFoodCalculator extends JFrame {
 
         private static final Dimension DIMENSION = new Dimension(Integer.MAX_VALUE, 200);
 
+        /**
+         * Constructs {@code ItemsPanel}.
+         *
+         * @param panels the item entries to add to this panel
+         */
         public ItemsPanel(final ItemEntryPanel... panels) {
             for (final ItemEntryPanel panel : panels) {
                 this.add(panel);
