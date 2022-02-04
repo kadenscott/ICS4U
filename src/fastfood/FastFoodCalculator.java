@@ -54,7 +54,6 @@ public class FastFoodCalculator extends JFrame {
 
         main.add(items);
         main.add(this.results);
-//        main.setLayout(new BoxLayout(main, BoxLayout.LINE_AXIS));
         main.setLayout(new GridLayout(2, 0));
         this.getContentPane().add(main);
     }
