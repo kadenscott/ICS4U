@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="HelloWorld" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="helloworld.HelloWorld" />
+    <option name="MAIN_CLASS_NAME" value="sh.kaden.ics4u.helloworld.HelloWorld" />
     <module name="ICS4U" />
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Run" />

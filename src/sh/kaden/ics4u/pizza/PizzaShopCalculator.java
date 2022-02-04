@@ -1,35 +1,27 @@
-package pizza;
+package sh.kaden.ics4u.pizza;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * A calculator application to determine the price of a pizza.
+ * A calculator application to determine the price of a sh.kaden.ics4u.pizza.
  */
 public class PizzaShopCalculator extends JFrame {
-
-    private static final Topping PEPPERONI = new Topping("pepperonis", 0.3);
-    private static final Topping MUSHROOM = new Topping("mushrooms", 0.3);
-    private static final Topping CHEESE = new Topping("cheese", 0.3);
-    private static final Topping SAUSAGE = new Topping("sausage", 0.3);
-    private static final Topping ONION = new Topping("onions", 0.3);
-    private static final Topping BLACK_OLIVE = new Topping("black olives", 0.3);
-    private static final Topping FRESH_GARLIC = new Topping("fresh garlic", 0.3);
-    private static final Topping TOMATO = new Topping("tomato", 0.3);
 
     private static final double LABOUR_COST = 4.00; // labour cost for 1 pizza
     private static final double STORE_COST = 2.5; // store cost for 1 pizza
     private static final double MATERIAL_MULTIPLIER = 0.5; // price per inch of diameter
+
     private static final Font FONT_BIG = new Font("Serif", Font.BOLD, 20);
     private static final Font FONT_SMALL = new Font("Serif", Font.BOLD, 15);
+
     private static final DecimalFormat COST_FORMAT = new DecimalFormat("$0.00");
 
     /**
@@ -41,7 +33,7 @@ public class PizzaShopCalculator extends JFrame {
         new PizzaShopCalculator();
     }
 
-    private final Map<Topping, ToppingPanel> toppings;
+    private final List<ToppingPanel> toppings;
     private final JTable priceBreakdownTable;
     private final JPanel mainPanel;
     private final JPanel pizzaPanel;
@@ -56,13 +48,13 @@ public class PizzaShopCalculator extends JFrame {
      */
     public PizzaShopCalculator() {
         super("Pizza Shop Calculator");
-        this.toppings = new HashMap<>();
-        this.initializeTopping(PEPPERONI, 1);
-        this.initializeTopping(CHEESE, 1);
-        this.initializeTopping(MUSHROOM, 0);
-        this.initializeTopping(SAUSAGE, 0);
-        this.initializeTopping(ONION, 0);
-        this.initializeTopping(TOMATO, 0);
+        this.toppings = new ArrayList<>();
+        this.initializeTopping("pepperoni", 1, 0.3);
+        this.initializeTopping("cheese", 1, 0.3);
+        this.initializeTopping("mushrooms", 0, 0.3);
+        this.initializeTopping("onions", 0, 0.3);
+        this.initializeTopping("garlic", 0, 0.3);
+        this.initializeTopping("olives", 0, 0.3);
 
         // init window properties
         this.setSize(500, 500);
@@ -118,8 +110,8 @@ public class PizzaShopCalculator extends JFrame {
     private double calculateMaterials(final double diameter) {
         double cost = this.calculateBaseCost(diameter);
 
-        for (final ToppingPanel toppingPanel : this.toppings.values()) {
-            cost = cost + toppingPanel.count * toppingPanel.topping.cost;
+        for (final ToppingPanel toppingPanel : this.toppings) {
+            cost = cost + toppingPanel.count() * toppingPanel.cost();
         }
 
         return cost;
@@ -137,7 +129,7 @@ public class PizzaShopCalculator extends JFrame {
         toppings.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
         toppings.setLayout(tLayout);
 
-        for (final ToppingPanel panel : this.toppings.values()) {
+        for (final ToppingPanel panel : this.toppings) {
             toppings.add(panel);
         }
 
@@ -268,11 +260,11 @@ public class PizzaShopCalculator extends JFrame {
         model.addRow(new Object[]{"Handling", COST_FORMAT.format(STORE_COST)});
         model.addRow(new Object[]{"Materials", COST_FORMAT.format(materials)});
 
-        for (final ToppingPanel toppingPanel : this.toppings.values()) {
-            final int count = toppingPanel.count;
-            final double cost = count * toppingPanel.topping.cost;
+        for (final ToppingPanel toppingPanel : this.toppings) {
+            final int count = toppingPanel.count();
+            final double cost = count * toppingPanel.cost();
 
-            model.addRow(new Object[]{" -- " + count + " " + toppingPanel.topping.name, COST_FORMAT.format(cost)});
+            model.addRow(new Object[]{" -- " + count + " " + toppingPanel.toppingName(), COST_FORMAT.format(cost)});
         }
 
         model.addRow(new Object[]{" -- Base cost", COST_FORMAT.format(this.calculateBaseCost(diameter))});
@@ -282,17 +274,18 @@ public class PizzaShopCalculator extends JFrame {
     /**
      * Creates a ToppingElement for {@code topping} and saves it in the toppings map.
      *
-     * @param topping       the topping
+     * @param toppingName   the topping name
      * @param defaultAmount the amount to start off with
      */
-    private void initializeTopping(final Topping topping,
-                                   final int defaultAmount) {
-        final ToppingPanel panel = new ToppingPanel(this, topping, defaultAmount);
-        this.toppings.put(topping, panel);
+    private void initializeTopping(final String toppingName,
+                                   final int defaultAmount,
+                                   final double cost) {
+        final ToppingPanel topping = new ToppingPanel(this, toppingName, cost, defaultAmount);
+        this.toppings.add(topping);
     }
 
     /**
-     * Updates values in the interface.
+     * Updates labels and the price break down with the current state of the input fields.
      */
     protected void update() {
         final String text = this.diameterField.getText();
@@ -318,167 +311,6 @@ public class PizzaShopCalculator extends JFrame {
             this.priceLabel.setVisible(false);
             this.invalidLabel.setVisible(true);
             this.updatePriceBreakdown(0);
-        }
-    }
-
-    /**
-     * A class that extends {@link JPanel} to render the topping count.
-     */
-    private static final class ToppingPanel extends JPanel {
-
-        private static final Dimension DIMENSION = new Dimension(50, 50);
-        private final PizzaShopCalculator app;
-        private final Topping topping;
-        private final JLabel toppingLabel;
-        private final JButton incrementButton;
-        private final JButton decrementButton;
-        private int count;
-
-        /**
-         * Constructs {@code ToppingPanel}.
-         *
-         * @param app           the app
-         * @param topping       the topping
-         * @param defaultAmount the default amount to add to the pizza
-         */
-        public ToppingPanel(final PizzaShopCalculator app,
-                            final Topping topping,
-                            final int defaultAmount) {
-            this.app = app;
-            this.topping = topping;
-            this.count = defaultAmount;
-
-            final SpringLayout spring = new SpringLayout();
-
-            final JPanel titlePanel = new JPanel();
-            this.toppingLabel = new JLabel(this.countName() + " " + this.topping.name);
-            titlePanel.add(this.toppingLabel);
-
-            final JPanel buttonPanel = new JPanel();
-            this.incrementButton = new JButton("+");
-            this.decrementButton = new JButton("-");
-            this.incrementButton.addActionListener(this::handleIncrement);
-            this.decrementButton.addActionListener(this::handleDecrement);
-            buttonPanel.add(this.incrementButton);
-            buttonPanel.add(this.decrementButton);
-            buttonPanel.setLayout(new GridLayout(0, 2));
-
-
-            this.add(titlePanel);
-            this.add(buttonPanel);
-            this.setLayout(spring);
-
-            spring.putConstraint(SpringLayout.NORTH, titlePanel, 10, SpringLayout.NORTH, this);
-            spring.putConstraint(SpringLayout.NORTH, buttonPanel, 10, SpringLayout.SOUTH, titlePanel);
-        }
-
-        /**
-         * Returns the name to give for the amount of toppings.
-         *
-         * @return the count name
-         */
-        private String countName() {
-            if (this.count == 0) {
-                return "no";
-            } else if (this.count == 1) {
-                return "regular";
-            } else if (this.count == 2) {
-                return "extra";
-            } else if (this.count == 3) {
-                return "double";
-            } else if (this.count == 4) {
-                return "triple";
-            } else if (this.count == 5) {
-                return "quadruple";
-            } else if (this.count == 6) {
-                return "extreme";
-            } else if (this.count == 7) {
-                return "mega";
-            } else if (this.count == 8) {
-                return "giga";
-            } else if (this.count == 9) {
-                return "supreme";
-            } else {
-                return "too much";
-            }
-        }
-
-        private void handleIncrement(final ActionEvent event) {
-            this.count = count + 1;
-            this.update();
-        }
-
-        private void handleDecrement(final ActionEvent event) {
-            if (count == 0) {
-                return;
-            } else {
-                this.count = count - 1;
-            }
-            this.update();
-        }
-
-        private void update() {
-            this.toppingLabel.setText(this.countName() + " " + this.topping.name);
-            this.app.update();
-        }
-
-    }
-
-    /**
-     * Represents a topping that can be added to a pizza.
-     */
-    private static final class Topping {
-
-        private final String name;
-        private final double cost;
-
-        /**
-         * Constructs {@code Topping}.
-         *
-         * @param name the topping name e.g. 'pepperoni'
-         * @param cost the cost of one of this topping
-         */
-        public Topping(final String name,
-                       final double cost) {
-            this.name = name;
-            this.cost = cost;
-        }
-
-    }
-
-    /**
-     * Watches for updates on the provided {@link JTextField} and calls a consumer whenever the text is modified.
-     */
-    private static final class UpdatingDocumentListener implements DocumentListener {
-
-        private final JTextField field;
-        private final Consumer<String> textConsumer;
-
-        /**
-         * Constructs {@code DiameterUpdateListener}.
-         *
-         * @param field        the field
-         * @param textConsumer the text consumer that is called whenever a modification is made to {@code field}
-         */
-        public UpdatingDocumentListener(final JTextField field,
-                                        final Consumer<String> textConsumer) {
-            this.field = field;
-            this.textConsumer = textConsumer;
-        }
-
-        @Override
-        public void insertUpdate(final DocumentEvent event) {
-            this.textConsumer.accept(this.field.getText());
-        }
-
-        @Override
-        public void removeUpdate(final DocumentEvent event) {
-            this.textConsumer.accept(this.field.getText());
-        }
-
-        @Override
-        public void changedUpdate(final DocumentEvent event) {
-            this.textConsumer.accept(this.field.getText());
         }
     }
 

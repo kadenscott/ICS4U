@@ -1,4 +1,4 @@
-package fastfood;
+package sh.kaden.ics4u.fastfood;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -188,7 +188,7 @@ public class FastFoodCalculator extends JFrame {
             this.totalTaxLabel.setVisible(valid);
             this.taxLabel.setVisible(valid);
             this.invalidLabel.setVisible(!valid);
-            this.tenderedLabel.setVisible(!valid && this.tendered != -1);
+            this.tenderedLabel.setVisible(valid && this.tendered != -1);
 
             final double total = (this.burgers * BURGER_COST) + (this.fries * FRIES_COST) + (this.drinks * DRINK_COST);
             final double taxes = total * HST;
@@ -196,7 +196,7 @@ public class FastFoodCalculator extends JFrame {
             this.totalNoTaxLabel.setText("Total before taxes: "+COST_FORMAT.format(total));
             this.taxLabel.setText("Tax: "+COST_FORMAT.format(taxes)+ " (HST)");
             this.totalTaxLabel.setText("Final total: "+COST_FORMAT.format(totalTaxes));
-            this.tenderedLabel.setText("Change: "+COST_FORMAT.format(this.tendered - total));
+            this.tenderedLabel.setText("Change: "+COST_FORMAT.format(this.tendered - totalTaxes));
         }
 
         /**

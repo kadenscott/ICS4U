@@ -1,4 +1,4 @@
-package helloworld;
+package sh.kaden.ics4u.helloworld;
 
 import javax.swing.*;
 import java.awt.*;
