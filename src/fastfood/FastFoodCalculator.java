@@ -1,8 +1,10 @@
 package fastfood;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.util.List;
+import java.text.DecimalFormat;
 
 /**
  * A calculator application to calculate the cost of fast food items.
@@ -13,15 +15,13 @@ public class FastFoodCalculator extends JFrame {
     private static final double BURGER_COST = 6.89;
     private static final double FRIES_COST = 2.29;
     private static final double DRINK_COST = 1.69;
+    private static final DecimalFormat COST_FORMAT = new DecimalFormat("$0.00");
 
     protected final ItemEntryPanel burgerPanel;
     protected final ItemEntryPanel friesPanel;
     protected final ItemEntryPanel drinksPanel;
     protected final ItemEntryPanel tenderPanel;
-    private double burgers;
-    private double fries;
-    private double softDrinks;
-    private double tendered;
+    protected final ResultsPanel results;
 
     /**
      * Entrypoint for {@link FastFoodCalculator}.
@@ -37,11 +37,6 @@ public class FastFoodCalculator extends JFrame {
      */
     public FastFoodCalculator() {
         super("Fast Food Calculator");
-        this.burgers = 0;
-        this.fries = 0;
-        this.softDrinks = 0;
-        this.tendered = 0;
-
         this.burgerPanel = new ItemEntryPanel(this, "Enter the number of burgers: ");
         this.friesPanel = new ItemEntryPanel(this, "Enter the number of fries: ");
         this.drinksPanel = new ItemEntryPanel(this, "Enter the number of drinks: ");
@@ -53,9 +48,15 @@ public class FastFoodCalculator extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
 
-        final ItemsPanel panel = new ItemsPanel(this.burgerPanel, this.friesPanel, this.drinksPanel, this.tenderPanel);
+        final JPanel main = new JPanel();
+        final ItemsPanel items = new ItemsPanel(this.burgerPanel, this.friesPanel, this.drinksPanel, this.tenderPanel);
+        this.results =  new ResultsPanel(this);
 
-        this.getContentPane().add(panel);
+        main.add(items);
+        main.add(this.results);
+//        main.setLayout(new BoxLayout(main, BoxLayout.LINE_AXIS));
+        main.setLayout(new GridLayout(2, 0));
+        this.getContentPane().add(main);
     }
 
     /**
@@ -75,12 +76,33 @@ public class FastFoodCalculator extends JFrame {
         public ItemEntryPanel(final FastFoodCalculator calculator,
                               final String text) {
             this.calculator = calculator;
+
+            final JPanel container = new JPanel();
             this.label = new JLabel(text);
             this.field = new JTextField();
             this.field.setColumns(10);
+            this.field.setText("0");
 
-            this.add(label);
-            this.add(field);
+            // add a document listener that updates the results panel when text is updated
+            this.field.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    calculator.results.update();
+                }
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    calculator.results.update();
+                }
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    calculator.results.update();
+                }
+            });
+
+            container.add(label);
+            container.add(field);
+
+            this.add(container);
         }
 
         /**
@@ -99,32 +121,109 @@ public class FastFoodCalculator extends JFrame {
      */
     private static class ItemsPanel extends JPanel {
 
-        private static final Dimension DIMENSION = new Dimension(Integer.MAX_VALUE, 100);
+        private static final Dimension DIMENSION = new Dimension(Integer.MAX_VALUE, 200);
 
         public ItemsPanel(final ItemEntryPanel... panels) {
-            final JPanel container = new JPanel();
-
             for (final ItemEntryPanel panel : panels) {
-                container.add(panel);
+                this.add(panel);
             }
 
-            container.setPreferredSize(DIMENSION);
-            container.setMaximumSize(DIMENSION);
+            final BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+            this.setLayout(layout);
 
-            this.add(container);
-            this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            this.setPreferredSize(DIMENSION);
+            this.setMaximumSize(DIMENSION);
         }
-
     }
 
-    private static class ResultPanel extends JPanel {
+    /**
+     * A panel that displays the results of the price calculations.
+     */
+    private static class ResultsPanel extends JPanel {
 
+        private static final Dimension DIMENSION = new Dimension(Integer.MAX_VALUE, 200);
         private final FastFoodCalculator calculator;
+        private final JLabel invalidLabel;
+        private final JLabel totalNoTaxLabel;
+        private final JLabel taxLabel;
+        private final JLabel totalTaxLabel;
+        private final JLabel tenderedLabel;
+        private double burgers = 0;
+        private double fries = 0;
+        private double drinks = 0;
+        private double tendered = -1; // -1  to hide
 
-        public ResultPanel(final FastFoodCalculator calculator) {
+        public ResultsPanel(final FastFoodCalculator calculator) {
             this.calculator = calculator;
+
+            this.totalNoTaxLabel = new JLabel();
+            this.taxLabel = new JLabel();
+            this.totalTaxLabel = new JLabel();
+            this.tenderedLabel = new JLabel();
+            this.invalidLabel = new JLabel("You entered invalid value(s). Please double-check the inputs.");
+            this.invalidLabel.setForeground(new Color(130, 22, 14));
+            this.invalidLabel.setVisible(false);
+
+            this.add(invalidLabel);
+            this.add(totalNoTaxLabel);
+            this.add(taxLabel);
+            this.add(totalTaxLabel);
+            this.add(tenderedLabel);
+
+            final BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+
+            this.setLayout(layout);
+            this.setPreferredSize(DIMENSION);
+            this.setMaximumSize(DIMENSION);
         }
 
-    }
+        public void update() {
+            final boolean valid = this.validateAndParse();
 
+            this.totalNoTaxLabel.setVisible(valid);
+            this.totalTaxLabel.setVisible(valid);
+            this.taxLabel.setVisible(valid);
+            this.invalidLabel.setVisible(!valid);
+            this.tenderedLabel.setVisible(!valid && this.tendered != -1);
+
+            final double total = (this.burgers * BURGER_COST) + (this.fries * FRIES_COST) + (this.drinks * DRINK_COST);
+            final double taxes = total * HST;
+            final double totalTaxes = total + taxes;
+            this.totalNoTaxLabel.setText("Total before taxes: "+COST_FORMAT.format(total));
+            this.taxLabel.setText("Tax: "+COST_FORMAT.format(taxes)+ " (HST)");
+            this.totalTaxLabel.setText("Final total: "+COST_FORMAT.format(totalTaxes));
+            this.tenderedLabel.setText("Change: "+COST_FORMAT.format(this.tendered - total));
+        }
+
+        /**
+         * Validates the {@link ItemEntryPanel}s on {@link FastFoodCalculator}, and stores
+         * their values.
+         *
+         * @return true if validation was successful, false if invalid input was provided
+         */
+        private boolean validateAndParse() {
+            final String burgerText = this.calculator.burgerPanel.text();
+            final String friesText = this.calculator.friesPanel.text();
+            final String drinksText = this.calculator.drinksPanel.text();
+            final String tenderedText = this.calculator.tenderPanel.text();
+
+            try {
+                this.burgers = Double.parseDouble(burgerText);
+                this.fries = Double.parseDouble(friesText);
+                this.drinks = Double.parseDouble(drinksText);
+
+                if (tenderedText.equals("0")) {
+                    this.tendered = -1;
+                } else if (!tenderedText.isEmpty()) {
+                    this.tendered = Double.parseDouble(tenderedText);
+                } else {
+                    this.tendered = -1;
+                }
+
+                return true;
+            } catch (final Exception e) {
+                return false;
+            }
+        }
+    }
 }
