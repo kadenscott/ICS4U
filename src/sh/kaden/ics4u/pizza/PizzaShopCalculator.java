@@ -1,14 +1,11 @@
 package sh.kaden.ics4u.pizza;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * A calculator application to determine the price of a sh.kaden.ics4u.pizza.
