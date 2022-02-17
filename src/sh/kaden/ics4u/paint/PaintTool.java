@@ -1,4 +1,4 @@
-package sh.kaden.ics4u.problem.paint;
+package sh.kaden.ics4u.paint;
 
 import java.text.DecimalFormat;
 import java.util.Scanner;

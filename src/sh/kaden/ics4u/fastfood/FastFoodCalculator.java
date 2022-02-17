@@ -42,7 +42,6 @@ public class FastFoodCalculator extends JFrame {
         this.drinksPanel = new ItemEntryPanel(this, "Enter the number of drinks: ");
         this.tenderPanel = new ItemEntryPanel(this, "Amount tendered (optional): ");
 
-
         // init window properties
         this.setSize(500, 500);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
