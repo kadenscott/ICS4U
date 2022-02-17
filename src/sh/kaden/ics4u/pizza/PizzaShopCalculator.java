@@ -46,15 +46,17 @@ public class PizzaShopCalculator extends JFrame {
     public PizzaShopCalculator() {
         super("Pizza Shop Calculator");
         this.toppings = new ArrayList<>();
-        this.initializeTopping("pepperoni", 1, 0.3);
-        this.initializeTopping("cheese", 1, 0.3);
-        this.initializeTopping("mushrooms", 0, 0.3);
-        this.initializeTopping("onions", 0, 0.3);
-        this.initializeTopping("garlic", 0, 0.3);
-        this.initializeTopping("olives", 0, 0.3);
+
+        // Initialize toppings with name, file image path, amount, and cost.
+        this.initializeTopping("pepperoni", "./src/sh/kaden/ics4u/pizza/pepperoni.png", 1, 0.3);
+        this.initializeTopping("cheese", "./src/sh/kaden/ics4u/pizza/cheese.png", 1, 0.3);
+        this.initializeTopping("mushrooms", "./src/sh/kaden/ics4u/pizza/mushroom.png", 0, 0.3);
+        this.initializeTopping("onions", "./src/sh/kaden/ics4u/pizza/onion.png", 0, 0.3);
+        this.initializeTopping("garlic", "./src/sh/kaden/ics4u/pizza/garlic.png", 0, 0.3);
+        this.initializeTopping("olives", "./src/sh/kaden/ics4u/pizza/olive.png", 0, 0.3);
 
         // init window properties
-        this.setSize(500, 500);
+        this.setSize(500, 650);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
         this.titlePanel = this.createTitlePanel();
@@ -123,7 +125,7 @@ public class PizzaShopCalculator extends JFrame {
         // construct toppings panel
         final JPanel toppings = new JPanel();
         final GridLayout tLayout = new GridLayout(3, 2);
-        toppings.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
+        toppings.setPreferredSize(new Dimension(Integer.MAX_VALUE, 180));
         toppings.setLayout(tLayout);
 
         for (final ToppingPanel panel : this.toppings) {
@@ -272,12 +274,15 @@ public class PizzaShopCalculator extends JFrame {
      * Creates a ToppingElement for {@code topping} and saves it in the toppings map.
      *
      * @param toppingName   the topping name
+     * @param filePath      the path to the topping's image file
      * @param defaultAmount the amount to start off with
+     * @param cost          the cost of adding this topping to the pizza
      */
     private void initializeTopping(final String toppingName,
+                                   final String filePath,
                                    final int defaultAmount,
                                    final double cost) {
-        final ToppingPanel topping = new ToppingPanel(this, toppingName, cost, defaultAmount);
+        final ToppingPanel topping = new ToppingPanel(this, toppingName, filePath, cost, defaultAmount);
         this.toppings.add(topping);
     }
 

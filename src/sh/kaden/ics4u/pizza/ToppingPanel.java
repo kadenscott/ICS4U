@@ -14,6 +14,7 @@ public final class ToppingPanel extends JPanel {
 
     private final PizzaShopCalculator app;
     private final String toppingName;
+    private final String pictureFile;
     private final double cost;
     private int count;
 
@@ -32,16 +33,19 @@ public final class ToppingPanel extends JPanel {
      */
     public ToppingPanel(final PizzaShopCalculator app,
                         final String toppingName,
+                        final String pictureFile,
                         final double cost,
                         final int defaultAmount) {
         this.app = app;
         this.toppingName = toppingName;
+        this.pictureFile = pictureFile;
         this.count = defaultAmount;
         this.cost = cost;
 
         // create title panel
         this.titlePanel = new JPanel();
         this.toppingLabel = new JLabel(this.countName() + " " + this.toppingName);
+        this.toppingLabel.setIcon(new ImageIcon(this.pictureFile));
         this.titlePanel.add(this.toppingLabel);
 
         // create button panel
