@@ -82,15 +82,6 @@ public final class ToppingPanel extends JPanel {
     }
 
     /**
-     * Sets the topping count.
-     *
-     * @param count the topping count
-     */
-    public void setCount(final int count) {
-        this.count = count;
-    }
-
-    /**
      * Returns the name of this topping.
      *
      * @return the topping name

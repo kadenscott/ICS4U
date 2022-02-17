@@ -1,0 +1,1 @@
+These are projects intended to be run within NetBeans (I used NetBeans 8.2)

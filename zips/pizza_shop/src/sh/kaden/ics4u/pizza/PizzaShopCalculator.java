@@ -3,8 +3,6 @@ package sh.kaden.ics4u.pizza;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,16 +194,6 @@ public class PizzaShopCalculator extends JFrame {
         // add a document listener that runs the consumer whenever textField is updated
         this.diameterField.getDocument().addDocumentListener(new UpdatingDocumentListener(this.diameterField, (text) -> this.update()));
 
-        final JButton resetButton = new JButton();
-        resetButton.setText("Reset");
-        resetButton.addActionListener(actionEvent -> {
-            diameterField.setText("");
-            for (final ToppingPanel topping : toppings) {
-                topping.setCount(0);
-            }
-            update();
-        });
-
         // create diameter panel - contains diameter, price, and invalid labels
         final JPanel diameterPanel = new JPanel();
         final SpringLayout sLayout = new SpringLayout();
@@ -226,15 +214,12 @@ public class PizzaShopCalculator extends JFrame {
         sLayout.putConstraint(SpringLayout.WEST, this.diameterField, 10, SpringLayout.EAST, this.diameterLabel);
         sLayout.putConstraint(SpringLayout.NORTH, this.diameterField, 7, SpringLayout.NORTH, diameterPanel);
 
-        // position button
-        sLayout.putConstraint(SpringLayout.EAST, resetButton, 10, SpringLayout.EAST, diameterPanel);
 
         // add labels to panel
         diameterPanel.add(this.diameterLabel);
         diameterPanel.add(this.diameterField);
         diameterPanel.add(this.invalidLabel);
         diameterPanel.add(this.priceLabel);
-        diameterPanel.add(resetButton);
 
         diameterPanel.setPreferredSize(dimension);
         diameterPanel.setMaximumSize(dimension);
