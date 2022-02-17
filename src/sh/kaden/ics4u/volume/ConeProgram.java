@@ -1,4 +1,4 @@
-package sh.kaden.ics4u.area;
+package sh.kaden.ics4u.volume;
 
 import java.util.Scanner;
 

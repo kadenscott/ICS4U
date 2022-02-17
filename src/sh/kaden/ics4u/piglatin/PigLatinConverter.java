@@ -22,16 +22,6 @@ public class PigLatinConverter {
     }
 
     /**
-     * Checks to see if {@code c} is a consonant letter.
-     *
-     * @param c the character to check
-     * @return true if consonant, false if not
-     */
-    private static boolean isConsonant(final char c) {
-        return Character.isAlphabetic(c) && !isVowel(c);
-    }
-
-    /**
      * Converts a word to pig latin.
      *
      * @param word the word
