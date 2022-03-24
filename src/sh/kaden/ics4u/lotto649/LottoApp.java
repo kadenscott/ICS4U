@@ -105,6 +105,7 @@ public class LottoApp {
         } catch (InterruptedException e) {
             System.out.println("There was a problem generating the lottery tickets.");
             System.out.println("The program will now exit.");
+            System.exit(1);
         }
 
         System.out.println("Generated " + this.ticketCount + " tickets.");
