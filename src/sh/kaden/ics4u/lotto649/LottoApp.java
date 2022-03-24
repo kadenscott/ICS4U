@@ -63,6 +63,8 @@ public class LottoApp {
         System.out.println("Welcome to the lottery!");
         System.out.println();
         System.out.println("You will be asked to enter the number of tickets to generate.");
+        System.out.println("Afterwards, the program will generate a winning ticket, and provide a list of any");
+        System.out.println("matching tickets.");
         System.out.println();
     }
 
