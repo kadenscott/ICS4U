@@ -10,20 +10,6 @@ import java.util.Scanner;
 
 /**
  * Assignment 'Lotto Array Assign 1'
- * Program Requirements:
- * - Allow the user to choose how many tickets they will be randomly generating 1-100
- * - this will be the size of your array
- * - We will use randomize to generate the ticket numbers from 1 – 49
- * - these will be stored in a 2D array
- * - The program will generate 6 numbers for the winning number stored in a 1D arrary
- * - The program will check each ticket to determine how many winning numbers there were and store that as in the last position of the 2D array (so 7 locations [x][7]).
- * - This will be accomplished using the boring method of loops and if statements
- * -  We will create this program using straight sequential programming
- * - this means the program will run each section one at a time without methods
- * - you should use statements requiring the user to hit a key to continue to the next section
- * - you should print out the tickets generated at some point
- * - also print out the winning numbers and then how many tickets had more than 3 matching numbers
- * - You can add additional elements to the program if you want but not (methods, sorts, searches etc)
  */
 public class LottoApp {
 
@@ -162,6 +148,12 @@ public class LottoApp {
         }
     }
 
+    /**
+     * Returns true if the winning numbers contain the provided number.
+     *
+     * @param number the number
+     * @return the ticket
+     */
     private boolean winningTicketContains(final int number) {
         for (final int winningNumber : this.winningNumbers) {
             if (winningNumber == number) {
@@ -172,10 +164,24 @@ public class LottoApp {
         return false;
     }
 
+    /**
+     * Returns the ticket numbers for the provided ticket.
+     *
+     * @param ticketIndex the ticket index (i.e. ticket "1", ticket "2", etc)
+     * @return the tickets
+     */
     private int[] getTicketNumbersFor(final int ticketIndex) {
         return this.tickets[ticketIndex];
     }
 
+    /**
+     * Generates an array of random numbers with {@code length}.
+     * <p>
+     * This method will ensure no duplicate numbers are included in the array.
+     *
+     * @param length the length
+     * @return the integer array
+     */
     private int[] generateRandomNumbers(final int length) {
         int[] arr = new int[length];
         for (int i = 0; i < length; i++) {
@@ -201,6 +207,13 @@ public class LottoApp {
         return arr;
     }
 
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive).
+     *
+     * @param min the min number
+     * @param max the max number
+     * @return a random number
+     */
     private static int randomInt(final int min,
                                  final int max) {
         return RANDOM.nextInt((max - min) + 1) + min;
